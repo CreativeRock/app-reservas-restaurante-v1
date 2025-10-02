@@ -48,9 +48,9 @@ export class ClienteAuthService {
             const cliente: Cliente = {
               id_cliente: response.data.id,
               nombre: response.data.nombre,
-              apellido: '', // No viene en la respuesta
+              apellido: '', //TODO: No viene en la respuesta, ajustar el endpoint API
               email: response.data.email,
-              telefono: '', // No viene en la respuesta
+              telefono: '', //TODO: No viene en la respuesta, ajustar el endpoint API
               preferencias: '',
               fecha_registro: '',
               fecha_actualizacion: ''

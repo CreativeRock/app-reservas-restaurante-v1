@@ -14,7 +14,7 @@ export class StaffAuthService {
   private currentUsuarioSubject = new BehaviorSubject<Usuario | null>(null);
   public currentUsuario$ = this.currentUsuarioSubject.asObservable();
 
-  constructor () {
+  constructor() {
     this.loadStoredUsuario();
   }
 
@@ -27,9 +27,9 @@ export class StaffAuthService {
             const usuario: Usuario = {
               id_usuario: response.data.id,
               nombre: response.data.nombre,
-              apellido: '', // No viene en la respuesta
+              apellido: '', //TODO: No viene en la respuesta, ajustar el endpoint
               email: response.data.email,
-              telefono: '', // No viene en la respuesta
+              telefono: '', //TODO: No viene en la respuesta, ajustar el endpoint
               fecha_creacion: '',
               fecha_actualizacion: '',
               nombre_rol: response.data.rol,
@@ -42,7 +42,7 @@ export class StaffAuthService {
       );
   }
 
-getCurrentUsuario(): Observable<UsuarioAuthResponse> {
+  getCurrentUsuario(): Observable<UsuarioAuthResponse> {
     return this.http.get<UsuarioAuthResponse>(`${this.baseUrl}/me`);
   }
 
@@ -54,6 +54,12 @@ getCurrentUsuario(): Observable<UsuarioAuthResponse> {
       })
     );
   }
+
+  //TODO: Debug Pendiente
+  getCurrentUsuarioValue(): Usuario | null {
+    return this.currentUsuarioSubject.value;
+  }
+
 
   isAuthenticated(): boolean {
     return !!this.currentUsuarioSubject.value;
