@@ -38,6 +38,10 @@ export class Hero {
       //Navegar a la página de disponibilidad con parámetros
       this.router.navigate(['/disponibilidad'], {
         queryParams: searchParams
+      });
+    } else {
+      Object.keys(this.searchForm.controls).forEach(key => {
+        this.searchForm.get(key)?.markAsTouched();
       })
     }
   }

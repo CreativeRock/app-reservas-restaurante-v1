@@ -1,1 +1,126 @@
-<p>mi-reservacion works!</p>
+//TODO: Verificar endpoint en API http://localhost/api-sistema-restaurante-g2-v1/public/reservas/cliente/5
+
+<div class="min-h-screen bg-gray-50">
+  <app-header></app-header>
+
+  <div class="container mx-auto px-4 py-8 pt-24">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex justify-between items-center">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800 font-family-second">Mis Reservas</h1>
+          <p class="text-gray-600 mt-2">Gestiona y revisa todas tus reservas</p>
+        </div>
+        <button
+          (click)="makeNewReservation()"
+          class="bg-amber-600 hover:bg-amber-700 text-white font-medium py-2 px-4 rounded transition-colors"
+        >
+          Nueva Reserva
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    @if (loading) {
+      <app-loading-spinner></app-loading-spinner>
+    }
+
+    <!-- Error -->
+    <app-error-message [message]="error"></app-error-message>
+
+    <!-- Lista de Reservas -->
+    @if (!loading && !error) {
+      @if (reservas.length === 0) {
+        <div class="bg-white rounded-lg shadow-md p-8 text-center">
+          <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+          </svg>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">No tienes reservas</h3>
+          <p class="text-gray-500 mb-4">Comienza haciendo tu primera reserva en nuestro restaurante</p>
+          <button
+            (click)="makeNewReservation()"
+            class="bg-amber-600 hover:bg-amber-700 text-white font-medium py-2 px-6 rounded transition-colors"
+          >
+            Hacer Primera Reserva
+          </button>
+        </div>
+      } @else {
+        <div class="space-y-4">
+          @for (reserva of reservas; track reserva.id_reserva) {
+            <div class="bg-white rounded-lg shadow-md p-6">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center space-x-4 mb-4">
+                    <span [class]="getStatusBadgeClass(reserva.estado)" class="px-3 py-1 rounded-full text-sm font-medium">
+                      {{ getStatusText(reserva.estado) }}
+                    </span>
+                    <span class="text-sm font-mono text-gray-600">
+                      Código: {{ reserva.codigo_reserva }}
+                    </span>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                      <p class="text-sm font-medium text-gray-600">Mesa</p>
+                      <p class="text-lg font-semibold text-gray-900">{{ reserva.numero_mesa }}</p>
+                      <p class="text-sm text-gray-500">{{ reserva.ubicacion_mesa }}</p>
+                    </div>
+
+                    <div>
+                      <p class="text-sm font-medium text-gray-600">Fecha y Hora</p>
+                      <p class="text-lg font-semibold text-gray-900">{{ reserva.fecha_reserva }}</p>
+                      <p class="text-sm text-gray-500">{{ reserva.hora_reserva }}</p>
+                    </div>
+
+                    <div>
+                      <p class="text-sm font-medium text-gray-600">Personas</p>
+                      <p class="text-lg font-semibold text-gray-900">{{ reserva.numero_personas }}</p>
+                      <p class="text-sm text-gray-500">Capacidad: {{ reserva.capacidad_mesa }}</p>
+                    </div>
+
+                    <div>
+                      <p class="text-sm font-medium text-gray-600">Tipo</p>
+                      <p class="text-lg font-semibold text-gray-900">{{ reserva.tipo_reserva }}</p>
+                      <p class="text-sm text-gray-500">Creada: {{ reserva.fecha_creacion | date:'short' }}</p>
+                    </div>
+                  </div>
+
+                  @if (reserva.notas) {
+                    <div class="mt-4">
+                      <p class="text-sm font-medium text-gray-600">Notas Especiales</p>
+                      <p class="text-sm text-gray-700">{{ reserva.notas }}</p>
+                    </div>
+                  }
+                </div>
+
+                <div class="mt-4 md:mt-0 md:ml-6 flex space-x-2">
+                  @if (canCancel(reserva)) {
+                    <button
+                      (click)="cancelReserva(reserva)"
+                      [disabled]="cancelandoReserva === reserva.id_reserva"
+                      class="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded transition-colors"
+                    >
+                      @if (cancelandoReserva === reserva.id_reserva) {
+                        <span class="flex items-center">
+                          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Cancelando...
+                        </span>
+                      } @else {
+                        Cancelar Reserva
+                      }
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+
+  <app-footer></app-footer>
+</div>

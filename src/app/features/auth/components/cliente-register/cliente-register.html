@@ -1,1 +1,199 @@
-<p>cliente-register works!</p>
+<div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-md">
+    <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900 font-family-second">
+      Crear Cuenta
+    </h2>
+    <p class="mt-2 text-center text-sm text-gray-600">
+      O
+      <a routerLink="/login" class="font-medium text-amber-600 hover:text-amber-500">
+        inicia sesión en tu cuenta
+      </a>
+    </p>
+  </div>
+
+  <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+    <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <!-- Nombre -->
+        <div>
+          <label for="nombre" class="block text-sm font-medium text-gray-700">
+            Nombre
+          </label>
+          <div class="mt-1">
+            <input
+              id="nombre"
+              type="text"
+              formControlName="nombre"
+              class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
+              [class.border-red-300]="registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched"
+            >
+            @if (registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched) {
+              <div class="text-red-600 text-xs mt-1">
+                El nombre es requerido
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Apellido -->
+        <div class="mt-4">
+          <label for="apellido" class="block text-sm font-medium text-gray-700">
+            Apellido
+          </label>
+          <div class="mt-1">
+            <input
+              id="apellido"
+              type="text"
+              formControlName="apellido"
+              class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
+              [class.border-red-300]="registerForm.get('apellido')?.invalid && registerForm.get('apellido')?.touched"
+            >
+            @if (registerForm.get('apellido')?.invalid && registerForm.get('apellido')?.touched) {
+              <div class="text-red-600 text-xs mt-1">
+                El apellido es requerido
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="mt-4">
+          <label for="email" class="block text-sm font-medium text-gray-700">
+            Correo Electrónico
+          </label>
+          <div class="mt-1">
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
+              [class.border-red-300]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+            >
+            @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+              <div class="text-red-600 text-xs mt-1">
+                @if (registerForm.get('email')?.errors?.['required']) {
+                  <span>El email es requerido</span>
+                }
+                @if (registerForm.get('email')?.errors?.['email']) {
+                  <span>Email inválido</span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="mt-4">
+          <label for="telefono" class="block text-sm font-medium text-gray-700">
+            Teléfono
+          </label>
+          <div class="mt-1">
+            <input
+              id="telefono"
+              type="tel"
+              formControlName="telefono"
+              class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
+              [class.border-red-300]="registerForm.get('telefono')?.invalid && registerForm.get('telefono')?.touched"
+            >
+            @if (registerForm.get('telefono')?.invalid && registerForm.get('telefono')?.touched) {
+              <div class="text-red-600 text-xs mt-1">
+                El teléfono es requerido
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="mt-4">
+          <label for="password" class="block text-sm font-medium text-gray-700">
+            Contraseña
+          </label>
+          <div class="mt-1">
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
+              [class.border-red-300]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+            >
+            @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+              <div class="text-red-600 text-xs mt-1">
+                La contraseña es requerida (mínimo 6 caracteres)
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="mt-4">
+          <label for="confirmPassword" class="block text-sm font-medium text-gray-700">
+            Confirmar Contraseña
+          </label>
+          <div class="mt-1">
+            <input
+              id="confirmPassword"
+              type="password"
+              formControlName="confirmPassword"
+              class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
+              [class.border-red-300]="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched"
+            >
+            @if (registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched) {
+              <div class="text-red-600 text-xs mt-1">
+                @if (registerForm.get('confirmPassword')?.errors?.['required']) {
+                  <span>Confirmar contraseña es requerido</span>
+                }
+                @if (registerForm.get('confirmPassword')?.errors?.['passwordMismatch']) {
+                  <span>Las contraseñas no coinciden</span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Preferencias -->
+        <div class="mt-4">
+          <label for="preferencias" class="block text-sm font-medium text-gray-700">
+            Preferencias
+          </label>
+          <div class="mt-1">
+            <textarea
+              id="preferencias"
+              formControlName="preferencias"
+              rows="3"
+              class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
+              placeholder="Ej: Mesa tranquila, sin humo, cerca de la ventana..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="mt-6">
+          <button
+            type="submit"
+            [disabled]="!registerForm.valid || loading"
+            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            @if (loading) {
+              <span class="flex items-center">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Creando cuenta...
+              </span>
+            } @else {
+              Crear Cuenta
+            }
+          </button>
+        </div>
+
+        <!-- Error Message -->
+        @if (error) {
+          <div class="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            {{ error }}
+          </div>
+        }
+      </form>
+    </div>
+  </div>
+</div>

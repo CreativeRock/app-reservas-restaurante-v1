@@ -1,1 +1,165 @@
-<p>dashboard works!</p>
+<div class="min-h-screen bg-gray-50">
+  <app-header></app-header>
+
+  <div class="container mx-auto px-4 py-8 pt-24">
+    <!-- Bienvenida -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-800 font-family-second">
+        ¡Bienvenido, {{ cliente?.nombre }}!
+      </h1>
+      <p class="text-gray-600 mt-2">Gestiona tus reservas y preferencias desde tu panel de cliente</p>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center">
+          <div class="p-3 bg-amber-100 rounded-full">
+            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Total Reservas</p>
+            <p class="text-2xl font-bold text-gray-900">{{ reservasRecientes.length }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center">
+          <div class="p-3 bg-green-100 rounded-full">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Confirmadas</p>
+            <p class="text-2xl font-bold text-gray-900">
+              {{ confirmadasCount }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center">
+          <div class="p-3 bg-yellow-100 rounded-full">
+            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Pendientes</p>
+            <p class="text-2xl font-bold text-gray-900">
+              {{ pendientesCount }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones rápidas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <button
+        (click)="makeNewReservation()"
+        class="bg-amber-600 hover:bg-amber-700 text-white font-medium py-4 px-6 rounded-lg transition-colors flex items-center justify-center"
+      >
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Nueva Reserva
+      </button>
+
+      <button
+        (click)="navigateToReservations()"
+        class="bg-white hover:bg-gray-50 text-gray-800 font-medium py-4 px-6 rounded-lg border border-gray-300 transition-colors flex items-center justify-center"
+      >
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+        </svg>
+        Ver Todas las Reservas
+      </button>
+    </div>
+
+    <!-- Reservas Recientes -->
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-800 font-family-second">Tus Reservas Recientes</h2>
+      </div>
+
+      @if (loading) {
+        <div class="p-8">
+          <app-loading-spinner></app-loading-spinner>
+        </div>
+      }
+
+      @if (error) {
+        <div class="p-6">
+          <app-error-message [message]="error"></app-error-message>
+        </div>
+      }
+
+      @if (!loading && !error) {
+        <div class="p-6">
+          @if (reservasRecientes.length === 0) {
+            <div class="text-center py-8">
+              <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+              </svg>
+              <p class="text-gray-500 text-lg">No tienes reservas aún</p>
+              <button
+                (click)="makeNewReservation()"
+                class="mt-4 bg-amber-600 hover:bg-amber-700 text-white font-medium py-2 px-6 rounded transition-colors"
+              >
+                Hacer tu Primera Reserva
+              </button>
+            </div>
+          } @else {
+            <div class="space-y-4">
+              @for (reserva of reservasRecientes; track reserva.id_reserva) {
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                  <div class="flex-1">
+                    <div class="flex items-center space-x-4">
+                      <div class="flex-shrink-0">
+                        <span [class]="getStatusBadgeClass(reserva.estado)" class="px-3 py-1 rounded-full text-sm font-medium">
+                          {{ getStatusText(reserva.estado) }}
+                        </span>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">
+                          Mesa {{ reserva.numero_mesa }} - {{ reserva.ubicacion_mesa }}
+                        </p>
+                        <p class="text-sm text-gray-500 truncate">
+                          {{ reserva.fecha_reserva }} a las {{ reserva.hora_reserva }} • {{ reserva.numero_personas }} personas
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex-shrink-0">
+                    <p class="text-sm font-mono text-gray-900">
+                      {{ reserva.codigo_reserva }}
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+
+            @if (reservasRecientes.length > 0) {
+              <div class="mt-6 text-center">
+                <button
+                  (click)="navigateToReservations()"
+                  class="bg-amber-600 hover:bg-amber-700 text-white font-medium py-2 px-6 rounded transition-colors"
+                >
+                  Ver Todas las Reservas
+                </button>
+              </div>
+            }
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <app-footer></app-footer>
+</div>

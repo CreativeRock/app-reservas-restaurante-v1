@@ -1,1 +1,94 @@
-<p>header works!</p>
+<header class="absolute top-0 left-0 z-50 w-full px-5 bg-white/20 backdrop-blur-md shadow border-b border-white">
+  <div class="relative w-[95%] max-w-[1200px] mx-auto py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+
+    <h1 class="font-bold text-2xl uppercase cursor-pointer text-white font-family-second">
+      <a routerLink="/">El chapinito</a>
+    </h1>
+
+    <!-- Botón menú móvil -->
+    <button
+      class="absolute right-0 mt-1 cursor-pointer text-xl sm:hidden"
+      (click)="toggleNavbar()"
+      type="button"
+    >
+      <span class="sr-only">Toggle Navigation</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M3 5H21" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M3 12H21" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M3 19H21" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+
+    <!-- Navegación -->
+    <nav
+      [class]="navbarOpen ? 'block' : 'hidden'"
+      class="pl-2 py-6 sm:flex sm:py-0 sm:items-center sm:space-x-4"
+    >
+      <ul class="flex flex-col gap-y-4 sm:flex-row sm:gap-x-7 text-white uppercase">
+        <li><a routerLink="/mesas" class="cursor-pointer transition hover:text-amber-600" (click)="navbarOpen = false">Mesas</a></li>
+        <li><a href="#ubicacion" class="cursor-pointer transition hover:text-amber-600" (click)="navbarOpen = false">Ubicación</a></li>
+        <li><a href="#contacto" class="cursor-pointer transition hover:text-amber-600" (click)="navbarOpen = false">Contacto</a></li>
+
+        <!-- Menú para usuario autenticado -->
+        @if (isClienteLoggedIn || isStaffLoggedIn) {
+          <li class="sm:hidden">
+            <button
+              (click)="goToDashboard(); navbarOpen = false"
+              class="cursor-pointer transition hover:text-amber-600 w-full text-left"
+            >
+              Mi Cuenta
+            </button>
+          </li>
+          <li class="sm:hidden">
+            <button
+              (click)="logout(); navbarOpen = false"
+              class="cursor-pointer transition hover:text-amber-600 w-full text-left"
+            >
+              Cerrar Sesión
+            </button>
+          </li>
+        }
+      </ul>
+
+      <!-- Botones de autenticación para móvil -->
+      @if (!isClienteLoggedIn && !isStaffLoggedIn) {
+        <div class="sm:hidden mt-4 space-y-2">
+          <a
+            routerLink="/login"
+            class="block bg-amber-600 transition hover:scale-105 h-10 px-3.5 py-1.5 flex items-center gap-2 font-bold rounded-md text-white cursor-pointer text-center justify-center"
+            (click)="navbarOpen = false"
+          >
+            Iniciar Sesión
+          </a>
+        </div>
+      }
+    </nav>
+
+    <!-- Botones de autenticación para desktop -->
+    <div class="hidden sm:block">
+      @if (isClienteLoggedIn || isStaffLoggedIn) {
+        <div class="flex items-center space-x-4">
+          <button
+            (click)="goToDashboard()"
+            class="text-white transition hover:text-amber-600 uppercase"
+          >
+            Mi Cuenta
+          </button>
+          <button
+            (click)="logout()"
+            class="bg-amber-600 transition hover:scale-105 h-10 px-3.5 py-1.5 flex items-center gap-2 font-bold rounded-md text-white cursor-pointer"
+          >
+            Cerrar Sesión
+          </button>
+        </div>
+      } @else {
+        <a
+          routerLink="/login"
+          class="bg-amber-600 transition hover:scale-105 h-10 px-3.5 py-1.5 flex items-center gap-2 font-bold rounded-md text-white cursor-pointer"
+        >
+          Iniciar Sesión
+        </a>
+      }
+    </div>
+  </div>
+</header>

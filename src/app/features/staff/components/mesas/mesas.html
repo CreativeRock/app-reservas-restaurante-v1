@@ -1,1 +1,99 @@
-<p>mesas works!</p>
+<div class="min-h-screen bg-gray-50">
+  <app-header></app-header>
+
+  <div class="container mx-auto px-4 py-8 pt-24">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex justify-between items-center">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800 font-family-second">Gestión de Mesas</h1>
+          <p class="text-gray-600 mt-2">Administra el estado y la información de las mesas</p>
+        </div>
+        <button
+          (click)="navigateToDashboard()"
+          class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded transition-colors"
+        >
+          Volver al Dashboard
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    @if (loading) {
+      <app-loading-spinner></app-loading-spinner>
+    }
+
+    <!-- Error -->
+    <app-error-message [message]="error"></app-error-message>
+
+    <!-- Lista de Mesas -->
+    @if (!loading && !error) {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (mesa of mesas; track mesa.id_mesa) {
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h3 class="text-xl font-semibold text-gray-800">{{ mesa.nombre_mesa }}</h3>
+                <p class="text-gray-600">Número: {{ mesa.numero_mesa }}</p>
+              </div>
+              <span [class]="getBadgeClass(mesa.tipo)" class="text-xs font-medium px-2 py-1 rounded">
+                {{ mesa.tipo }}
+              </span>
+            </div>
+
+            <p class="text-gray-700 mb-4">{{ mesa.caracteristicas }}</p>
+
+            <div class="space-y-2 mb-4">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Capacidad:</span>
+                <span class="font-medium">{{ mesa.capacidad }} personas</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Ubicación:</span>
+                <span class="font-medium">{{ mesa.ubicacion }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Estado:</span>
+                <span [class]="getEstadoBadgeClass(mesa.estado)" class="px-2 py-1 rounded-full text-xs font-medium">
+                  {{ getEstadoText(mesa.estado) }}
+                </span>
+              </div>
+            </div>
+
+            //Descomentar cuando este implementado
+            <!-- <div class="flex space-x-2">
+              @if (mesa.estado !== 'disponible') {
+                <button
+                  (click)="cambiarEstadoMesa(mesa, 'disponible')"
+                  class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded text-sm transition-colors"
+                >
+                  Disponible
+                </button>
+              }
+
+              @if (mesa.estado !== 'reservada') {
+                <button
+                  (click)="cambiarEstadoMesa(mesa, 'reservada')"
+                  class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-3 rounded text-sm transition-colors"
+                >
+                  Reservada
+                </button>
+              }
+
+              @if (mesa.estado !== 'fuera_servicio') {
+                <button
+                  (click)="cambiarEstadoMesa(mesa, 'fuera_servicio')"
+                  class="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-3 rounded text-sm transition-colors"
+                >
+                  Fuera de Servicio
+                </button>
+              }
+            </div> -->
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <app-footer></app-footer>
+</div>

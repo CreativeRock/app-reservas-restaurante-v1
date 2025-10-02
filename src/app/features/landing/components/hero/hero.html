@@ -1,34 +1,28 @@
-<section class="bg-hero-pattern bg-cover bg-center py-20">
-  <div class="container mx-auto px-4">
+<section class="bg-[url(/assets/img/hero.webp)] bg-center bg-cover h-screen">
+  <div class="absolute z-10 inset-0 bg-black/50"></div>
+
+  <div class="relative z-20 left-auto right-auto top-50 bottom-50 container md:pt-30 mx-auto px-4">
     <div class="text-center mb-12">
-      <h1 class="text-5xl font-bold text-white mb-4">Reserva tu Mesa</h1>
-      <p class="text-xl text-white">Encuentra la mesa perfecta para tu ocasión especial</p>
+      <h1 class="text-5xl font-bold text-white mb-4 font-family-second uppercase">Encuentra tu mesa perfecta</h1>
+      <p class="text-xl text-white">Reserva tu mesa en línea de forma rápida y sencilla.</p>
     </div>
 
-    <form
-      [formGroup]="searchForm"
-      (ngSubmit)="onSearch()"
-      class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl p-8"
-    >
+    <form [formGroup]="searchForm" (ngSubmit)="onSearch()"
+      class="max-w-4xl mx-auto bg-white/20 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <!-- Fecha -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
-          <input
-            type="date"
-            formControlName="fecha"
-            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            [min]="minDate"
-          >
+          <label class="block text-sm font-medium text-white mb-2 uppercase">Fecha</label>
+          <input type="date" formControlName="fecha"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+            [min]="minDate">
         </div>
 
         <!-- Hora -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Hora</label>
-          <select
-            formControlName="hora"
-            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
+          <label class="block text-sm font-medium text-white mb-2 uppercase">Hora</label>
+          <select formControlName="hora"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
             <option value="12:00:00">12:00 PM</option>
             <option value="13:00:00">1:00 PM</option>
             <option value="14:00:00">2:00 PM</option>
@@ -40,11 +34,9 @@
 
         <!-- Personas -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Personas</label>
-          <select
-            formControlName="capacidad"
-            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
+          <label class="block text-sm font-medium text-white mb-2 uppercase">Personas</label>
+          <select formControlName="capacidad"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
             @for (num of [1,2,3,4,5,6,7,8]; track num) {
               <option [value]="num">
                 {{ num }} {{ num === 1 ? 'persona' : 'personas' }}
@@ -55,11 +47,8 @@
 
         <!-- Botón Buscar -->
         <div class="flex items-end">
-          <button
-            type="submit"
-            [disabled]="!searchForm.valid"
-            class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200"
-          >
+          <button type="submit" [disabled]="!searchForm.valid"
+            class="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-gray-400 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200">
             Buscar Mesas
           </button>
         </div>

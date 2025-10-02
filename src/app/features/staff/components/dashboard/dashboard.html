@@ -1,1 +1,169 @@
-<p>dashboard works!</p>
+<div class="min-h-screen bg-gray-50">
+  <app-header></app-header>
+
+  <div class="container mx-auto px-4 py-8 pt-24">
+    <!-- Bienvenida -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-800 font-family-second">
+        Dashboard Staff - {{ usuario?.nombre_rol }}
+      </h1>
+      <p class="text-gray-600 mt-2">Bienvenido, {{ usuario?.nombre }}</p>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center">
+          <div class="p-3 bg-amber-100 rounded-full">
+            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Total Mesas</p>
+            <p class="text-2xl font-bold text-gray-900">{{ getTotalMesas() }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center">
+          <div class="p-3 bg-green-100 rounded-full">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Mesas Disponibles</p>
+            <p class="text-2xl font-bold text-gray-900">{{ getMesasDisponibles() }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center">
+          <div class="p-3 bg-purple-100 rounded-full">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Reservas Hoy</p>
+            <p class="text-2xl font-bold text-gray-900">{{ reservasHoy.length }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center">
+          <div class="p-3 bg-yellow-100 rounded-full">
+            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Pendientes</p>
+            <p class="text-2xl font-bold text-gray-900">{{ getReservasPendientes() }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones rápidas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <button
+        (click)="navigateToReservas()"
+        class="bg-amber-600 hover:bg-amber-700 text-white font-medium py-4 px-6 rounded-lg transition-colors flex items-center justify-center"
+      >
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+        </svg>
+        Gestionar Reservas
+      </button>
+
+      <button
+        (click)="navigateToMesas()"
+        class="bg-green-600 hover:bg-green-700 text-white font-medium py-4 px-6 rounded-lg transition-colors flex items-center justify-center"
+      >
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+        </svg>
+        Gestionar Mesas
+      </button>
+    </div>
+
+    <!-- Reservas de Hoy -->
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-800 font-family-second">Reservas para Hoy</h2>
+      </div>
+
+      @if (loading) {
+        <div class="p-8">
+          <app-loading-spinner></app-loading-spinner>
+        </div>
+      }
+
+      @if (error) {
+        <div class="p-6">
+          <app-error-message [message]="error"></app-error-message>
+        </div>
+      }
+
+      @if (!loading && !error) {
+        <div class="p-6">
+          @if (reservasHoy.length === 0) {
+            <div class="text-center py-8">
+              <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+              </svg>
+              <p class="text-gray-500 text-lg">No hay reservas para hoy</p>
+            </div>
+          } @else {
+            <div class="space-y-4">
+              @for (reserva of reservasHoy; track reserva.id_reserva) {
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                  <div class="flex-1">
+                    <div class="flex items-center space-x-4">
+                      <div class="flex-shrink-0">
+                        <span [class]="getStatusBadgeClass(reserva.estado)" class="px-3 py-1 rounded-full text-sm font-medium">
+                          {{ getStatusText(reserva.estado) }}
+                        </span>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">
+                          {{ reserva.nombre_completo || 'Cliente no registrado' }} - Mesa {{ reserva.numero_mesa }}
+                        </p>
+                        <p class="text-sm text-gray-500 truncate">
+                          {{ reserva.hora_reserva }} • {{ reserva.numero_personas }} personas • {{ reserva.telefono }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex-shrink-0">
+                    <p class="text-sm font-mono text-gray-900">
+                      {{ reserva.codigo_reserva }}
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+
+            @if (reservasHoy.length > 0) {
+              <div class="mt-6 text-center">
+                <button
+                  (click)="navigateToReservas()"
+                  class="bg-amber-600 hover:bg-amber-700 text-white font-medium py-2 px-6 rounded transition-colors"
+                >
+                  Ver Todas las Reservas
+                </button>
+              </div>
+            }
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <app-footer></app-footer>
+</div>

@@ -1,1 +1,69 @@
-<p>mesas-galeria works!</p>
+<div class="min-h-screen bg-gray-50">
+  <app-header />
+
+  <div class="container mx-auto px-4 py-8 pt-24">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-800 font-family-second">Todas Nuestras Mesas</h1>
+      <p class="text-gray-600 mt-2">Explora nuestra amplia variedad de mesas para cualquier ocasión</p>
+    </div>
+
+    <!-- Loading -->
+    @if (loading) {
+    <app-loading-spinner />
+    }
+
+    <!-- Error -->
+    <app-error-message [message]="error" />
+
+    <!-- Galería de Mesas -->
+    @if (!loading && !error) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      @for (mesa of mesas; track mesa.id_mesa) {
+      <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+        <img [src]="getMesaImage(mesa)" [alt]="mesa.nombre_mesa" class="w-full h-48 object-cover bg-gray-200"
+          onerror="this.src='/assets/images/tables/default-table.jpg'">
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-xl font-semibold text-gray-800">{{ mesa.nombre_mesa }}</h3>
+            <span [class]="getBadgeClass(mesa.tipo)" class="text-xs font-medium px-2 py-1 rounded">
+              {{ mesa.tipo }}
+            </span>
+          </div>
+
+          <p class="text-gray-600 text-sm mb-4">{{ mesa.caracteristicas }}</p>
+
+          <div class="space-y-2 mb-4">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Capacidad:</span>
+              <span class="font-medium">{{ mesa.capacidad }} personas</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Ubicación:</span>
+              <span class="font-medium">{{ mesa.ubicacion }}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Número:</span>
+              <span class="font-medium">{{ mesa.numero_mesa }}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Estado:</span>
+              <span [class]="mesa.estado === 'disponible' ? 'text-green-600 font-medium' : 'text-red-600 font-medium'">
+                {{ mesa.estado === 'disponible' ? 'Disponible' : 'No Disponible' }}
+              </span>
+            </div>
+          </div>
+
+          <button (click)="reserveTable(mesa.id_mesa)" [disabled]="mesa.estado !== 'disponible'"
+            class="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded transition-colors">
+            {{ mesa.estado === 'disponible' ? 'Reservar Esta Mesa' : 'No Disponible' }}
+          </button>
+        </div>
+      </div>
+      }
+    </div>
+    }
+  </div>
+
+  <app-footer></app-footer>
+</div>
