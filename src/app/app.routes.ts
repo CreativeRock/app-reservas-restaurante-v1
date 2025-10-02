@@ -21,6 +21,8 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/components/cliente-register/cliente-register')
       .then(componente => componente.ClienteRegister)
   },
+
+  //Reservaciones
   {
     path: 'disponibiliad',
     loadComponent: () => import('./features/reservacion/components/disponibilidad/disponibilidad')
@@ -41,6 +43,8 @@ export const routes: Routes = [
     loadComponent: () => import('./features/reservacion/components/reservacion-confirmacion/reservacion-confirmacion')
       .then(componente => componente.ReservacionConfirmacion)
   },
+
+  //Área Cliente (Protegida)
   {
     path: 'cliente',
     canActivate: [clienteAuthGuard],
@@ -62,6 +66,8 @@ export const routes: Routes = [
       }
     ]
   },
+
+  //Área Staff (Protegida)
   {
     path: 'staff',
     canActivate: [staffAuthGuard],
@@ -78,11 +84,14 @@ export const routes: Routes = [
       }
     ]
   },
+
+  //Login Staff
   {
     path: 'staff/login',
     loadComponent: () => import('./features/staff/components/staff-login/staff-login')
     .then(componente => componente.StaffLogin)
   },
+
   //Ruta por defecto
   {
     path: '**',
