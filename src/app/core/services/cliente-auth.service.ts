@@ -1,3 +1,4 @@
+// core/services/cliente-auth.service.ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
@@ -11,68 +12,107 @@ export class ClienteAuthService {
   private baseUrl = 'http://localhost/api-sistema-restaurante-g2-v1/public/clientes/auth';
 
   private currentClienteSubject = new BehaviorSubject<Cliente | null>(null);
-  public currntCliente$ = this.currentClienteSubject.asObservable();
+  public currentCliente$ = this.currentClienteSubject.asObservable();
 
   constructor() {
     this.loadStoredCliente();
   }
 
   login(credentials: ClienteLoginRequest): Observable<ClienteAuthResponse> {
-    return this.http.post<ClienteAuthResponse>(`${this.baseUrl}/login`, credentials)
-      .pipe(
-        tap(response => {
-          if (response.success) {
-            // Transformar la respuesta a Cliente
-            const cliente: Cliente = {
-              id_cliente: response.data.id,
-              nombre: response.data.nombre,
-              apellido: '', //TODO: No viene en la respuesta, ajustar el endpoint
-              email: response.data.email,
-              telefono: '', //TODO: No viene en la respuesta, ajustar el endpoint
-              preferencias: '',
-              fecha_registro: '',
-              fecha_actualizacion: ''
-            };
-            this.setCurrentCliente(cliente);
-          }
-        }),
-        catchError(this.handleError)
-      );
+    return this.http.post<ClienteAuthResponse>(
+      `${this.baseUrl}/login`,
+      credentials,
+      { withCredentials: true }
+    ).pipe(
+      tap(response => {
+        if (response.success) {
+          const nombreCompleto = response.data.nombre.split(' ');
+          const nombre = nombreCompleto[0] || '';
+          const apellido = nombreCompleto.slice(1).join(' ') || '';
+
+          const cliente: Cliente = {
+            id_cliente: response.data.id,
+            nombre: nombre,
+            apellido: apellido,
+            email: response.data.email,
+            telefono: '',
+            preferencias: '',
+            fecha_registro: '',
+            fecha_actualizacion: ''
+          };
+          this.setCurrentCliente(cliente);
+        }
+      }),
+      catchError(this.handleError)
+    );
   }
 
   register(registerData: ClienteRegisterRequest): Observable<ClienteAuthResponse> {
-    return this.http.post<ClienteAuthResponse>(`${this.baseUrl}/register`, registerData)
-      .pipe(
-        tap(response => {
-          if (response.success) {
-            const cliente: Cliente = {
-              id_cliente: response.data.id,
-              nombre: response.data.nombre,
-              apellido: '', //TODO: No viene en la respuesta, ajustar el endpoint API
-              email: response.data.email,
-              telefono: '', //TODO: No viene en la respuesta, ajustar el endpoint API
-              preferencias: '',
-              fecha_registro: '',
-              fecha_actualizacion: ''
-            };
-            this.setCurrentCliente(cliente);
-          }
-        }),
-        catchError(this.handleError)
-      );
+    return this.http.post<ClienteAuthResponse>(
+      `${this.baseUrl}/register`,
+      registerData,
+      { withCredentials: true }
+    ).pipe(
+      tap(response => {
+        if (response.success) {
+          this.login({
+            email: registerData.email,
+            password: registerData.password
+          }).subscribe();
+        }
+      }),
+      catchError(this.handleError)
+    );
   }
 
   getCurrentCliente(): Observable<ClienteAuthResponse> {
-    return this.http.get<ClienteAuthResponse>(`${this.baseUrl}/me`);
+    return this.http.get<ClienteAuthResponse>(
+      `${this.baseUrl}/me`,
+      { withCredentials: true }
+    ).pipe(
+      tap(response => {
+        if (response.success) {
+          const nombreCompleto = response.data.nombre.split(' ');
+          const nombre = nombreCompleto[0] || '';
+          const apellido = nombreCompleto.slice(1).join(' ') || '';
+
+          const cliente: Cliente = {
+            id_cliente: response.data.id,
+            nombre: nombre,
+            apellido: apellido,
+            email: response.data.email,
+            telefono: '',
+            preferencias: '',
+            fecha_registro: '',
+            fecha_actualizacion: ''
+          };
+          this.setCurrentCliente(cliente);
+        }
+      }),
+      catchError(error => {
+        if (error.status === 401) {
+          this.clearCurrentCliente(); // Ahora es público
+        }
+        return throwError(() => error);
+      })
+    );
   }
 
   logout(): Observable<any> {
-    return this.http.post(`${this.baseUrl}/logout`, {}).pipe(
+    return this.http.post(
+      `${this.baseUrl}/logout`,
+      {},
+      { withCredentials: true }
+    ).pipe(
       tap(() => {
-        localStorage.removeItem('currentCliente');
-        this.currentClienteSubject.next(null);
-      })
+        this.clearCurrentCliente(); // Ahora es público
+      }),
+      catchError(this.handleError)
     );
+  }
+
+  checkSession(): Observable<ClienteAuthResponse> {
+    return this.getCurrentCliente();
   }
 
   isAuthenticated(): boolean {
@@ -81,6 +121,12 @@ export class ClienteAuthService {
 
   getCurrentClienteValue(): Cliente | null {
     return this.currentClienteSubject.value;
+  }
+
+  // 🔥 CAMBIO: Hacer este método público
+  clearCurrentCliente(): void {
+    localStorage.removeItem('currentCliente');
+    this.currentClienteSubject.next(null);
   }
 
   private setCurrentCliente(cliente: Cliente): void {
@@ -96,7 +142,7 @@ export class ClienteAuthService {
         this.currentClienteSubject.next(cliente);
       } catch (error) {
         console.error('Error loading stored cliente:', error);
-        localStorage.removeItem('currentCliente');
+        this.clearCurrentCliente(); // Ahora es público
       }
     }
   }
@@ -110,7 +156,8 @@ export class ClienteAuthService {
     } else if (error.status === 0) {
       errorMessage = 'No se pudo conectar al servidor';
     } else if (error.status === 401) {
-      errorMessage = 'Credenciales incorrectas';
+      errorMessage = 'No autorizado. Por favor, inicia sesión nuevamente.';
+      this.clearCurrentCliente(); // Ahora es público
     }
 
     return throwError(() => new Error(errorMessage));
