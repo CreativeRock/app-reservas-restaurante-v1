@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { ClienteAuthService } from 'src/app/core/services/cliente-auth.service';
-import { ReservaService } from 'src/app/core/services/reserva.service';
+import { ClienteReservaService } from 'src/app/core/services/cliente-reserva.service';
 import { ErrorMessage } from 'src/app/shared/components/error-message/error-message';
 import { Footer } from 'src/app/shared/components/footer/footer';
 import { Header } from 'src/app/shared/components/header/header';
@@ -15,36 +15,66 @@ import { Reserva } from 'src/app/shared/models/reserva';
 })
 export class Dashboard implements OnInit {
   private clienteAuthService = inject(ClienteAuthService);
-  private reservaService = inject(ReservaService);
+  private clienteReservaService = inject(ClienteReservaService);
   private router = inject(Router);
 
   cliente: any = null;
-  reservasRecientes: Reserva[] = []
+  reservasRecientes: Reserva[] = [];
   loading = false;
+  sessionChecking = true;
   error = '';
-  confirmadasCount: any;
-  pendientesCount: any;
+  totalReservas = 0;
+  confirmadasCount = 0;
+  pendientesCount = 0;
 
   ngOnInit(): void {
-    this.cliente = this.clienteAuthService.getCurrentClienteValue();
-    this.loadReservasRecientes();
+    this.verifySessionAndLoadData();
+  }
+
+  verifySessionAndLoadData(): void {
+    this.sessionChecking = true;
+
+    // Verificar sesión en el servidor
+    this.clienteAuthService.checkSession().subscribe({
+      next: (response) => {
+        this.sessionChecking = false;
+        if (response.success) {
+          this.cliente = this.clienteAuthService.getCurrentClienteValue();
+          this.loadReservasRecientes();
+        } else {
+          this.router.navigate(['/login']);
+        }
+      },
+      error: (error) => {
+        this.sessionChecking = false;
+        console.error('Error verificando sesión:', error);
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
   loadReservasRecientes(): void {
     this.loading = true;
+    this.error = '';
 
-    if (this.cliente) {
-      this.reservaService.getReservasByCliente(this.cliente.id_cliente).subscribe({
-        next: (reservas) => {
-          this.reservasRecientes = reservas.slice(0, 3);
-          this.loading = false;
-        },
-        error: (error) => {
-          this.error = error.message;
-          this.loading = false;
-        }
-      });
-    }
+    this.clienteReservaService.getReservasByCliente().subscribe({
+      next: (reservas) => {
+        const reservasOrdenadas = reservas.sort((a, b) =>
+          new Date(b.fecha_reserva + ' ' + b.hora_reserva).getTime() -
+          new Date(a.fecha_reserva + ' ' + a.hora_reserva).getTime()
+        );
+
+        this.reservasRecientes = reservasOrdenadas.slice(0, 3);
+        this.totalReservas = reservas.length;
+        this.confirmadasCount = reservas.filter(r => r.estado === 'confirmada').length;
+        this.pendientesCount = reservas.filter(r => r.estado === 'pendiente').length;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.error = error.message;
+        this.loading = false;
+      }
+    });
   }
 
   getStatusBadgeClass(estado: string): string {
@@ -76,6 +106,6 @@ export class Dashboard implements OnInit {
   }
 
   makeNewReservation(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/mesas']);
   }
 }
