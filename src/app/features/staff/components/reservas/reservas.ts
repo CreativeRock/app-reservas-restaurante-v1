@@ -2,7 +2,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { ReservaService } from 'src/app/core/services/reserva.service';
+import { StaffReservaService } from 'src/app/core/services/staff-reserva.service';
 import { ErrorMessage } from 'src/app/shared/components/error-message/error-message';
 import { Footer } from 'src/app/shared/components/footer/footer';
 import { Header } from 'src/app/shared/components/header/header';
@@ -16,7 +16,7 @@ import { Reserva } from 'src/app/shared/models/reserva';
 })
 
 export class Reservas {
-  private reservaService = inject(ReservaService);
+  private reservaService = inject(StaffReservaService);
   private router = inject(Router);
 
   reservas: Reserva[] = [];
