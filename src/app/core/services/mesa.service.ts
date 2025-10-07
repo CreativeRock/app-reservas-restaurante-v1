@@ -11,9 +11,6 @@ export class MesaService {
   private baseUrl = 'http://localhost/api-sistema-restaurante-g2-v1/public/mesas';
 
   getMesaById(id: number): Observable<Mesa> {
-    console.log('Llamando a getMesaById con id:', id);
-    console.log('URL:', `${this.baseUrl}/${id}`);
-
     return this.http.get<{ success: boolean, message: string, data: Mesa }>(`${this.baseUrl}/${id}`)
       .pipe(
         tap(response => console.log('Respuesta cruda:', response)),
@@ -34,9 +31,8 @@ export class MesaService {
       .set('hora', searchParams.hora)
       .set('capacidad', searchParams.capacidad.toString());
 
-    // CAMBIA ESTA URL:
     return this.http.get<{ success: boolean, message: string, data: Mesa[] }>(
-      `${this.baseUrl}/disponibilidad`,  // ← URL CORRECTA
+      `${this.baseUrl}/disponibilidad`,
       { params }
     ).pipe(
       map(response => response.data),
