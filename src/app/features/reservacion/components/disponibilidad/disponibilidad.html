@@ -69,7 +69,7 @@
     }
 
     <!-- Sin resultados -->
-    @if (!loading && !error && mesas.length === 0) {
+    @if (!loading && !error && mesas && mesas.length === 0) {
       <div class="text-center py-12">
         <p class="text-gray-500 text-lg">No se encontraron mesas disponibles para los criterios seleccionados.</p>
         <button
@@ -82,7 +82,7 @@
     }
 
     <!-- Ver todas las mesas -->
-    @if (mesas.length > 0) {
+    @if (mesas && mesas.length > 0) {
       <div class="mt-8 text-center">
         <button
           (click)="viewAllTables()"

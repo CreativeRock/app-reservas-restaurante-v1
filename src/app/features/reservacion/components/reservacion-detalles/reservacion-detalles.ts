@@ -30,26 +30,42 @@ export class ReservacionDetalles {
   loading = false;
   error = '';
   isClienteLoggedIn = false;
+  today = new Date().toISOString().split('T')[0]
 
   ngOnInit(): void {
-    const tableId = this.route.snapshot.paramMap.get('tableId');
-    this.route.queryParams.subscribe(params => {
-      this.searchParams = params;
-      if (tableId) {
-        this.loadMesa(parseInt(tableId));
-      }
-    });
+    const mesaId = this.route.snapshot.paramMap.get('mesaId');
 
-    this.isClienteLoggedIn = this.clienteAuthService.isAuthenticated();
-
+    // PRIMERO: Crear el formulario con TODOS los controles
     this.reservationForm = this.fb.group({
       nombre_completo: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       telefono: ['', Validators.required],
+      fecha: ['', Validators.required],  // ← Control fecha
+      hora: ['', Validators.required],    // ← Control hora
       notas: ['']
     });
 
-    // Si el cliente está logueado, precargar sus datos
+    this.isClienteLoggedIn = this.clienteAuthService.isAuthenticated();
+
+    // SEGUNDO: Suscribirse a queryParams y cargar mesa
+    this.route.queryParams.subscribe(params => {
+      this.searchParams = params;
+      console.log('Params recibidos:', this.searchParams);
+
+      // Pre-cargar valores si vienen de disponibilidad
+      if (this.searchParams.fecha && this.searchParams.hora) {
+        this.reservationForm.patchValue({
+          fecha: this.searchParams.fecha,
+          hora: this.searchParams.hora
+        });
+      }
+
+      if (mesaId) {
+        this.loadMesa(parseInt(mesaId));
+      }
+    });
+
+    // Pre-cargar datos de cliente si está logueado
     if (this.isClienteLoggedIn) {
       const currentCliente = this.clienteAuthService.getCurrentClienteValue();
       if (currentCliente) {
@@ -82,10 +98,10 @@ export class ReservacionDetalles {
 
       const reserva: ReservaRequest = {
         id_mesa: this.mesa.id_mesa,
-        fecha_reserva: this.searchParams.fecha,
-        hora_reserva: this.searchParams.hora,
-        numero_personas: this.searchParams.capacidad,
+        numero_personas: this.searchParams.capacidad || this.mesa.capacidad,
         tipo_reserva: 'online',
+        fecha_reserva: this.reservationForm.get('fecha')?.value,
+        hora_reserva: this.reservationForm.get('hora')?.value,
         notas: this.reservationForm.get('notas')?.value,
         estado: 'pendiente'
       };

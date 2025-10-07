@@ -28,14 +28,12 @@
         <!-- Nombre -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo *</label>
-          <input
-            type="text"
-            formControlName="nombre_completo"
+          <input type="text" formControlName="nombre_completo"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            [class.border-red-300]="reservationForm.get('nombre_completo')?.invalid && reservationForm.get('nombre_completo')?.touched"
-          >
-          <div *ngIf="reservationForm.get('nombre_completo')?.invalid && reservationForm.get('nombre_completo')?.touched"
-               class="text-red-600 text-sm mt-1">
+            [class.border-red-300]="reservationForm.get('nombre_completo')?.invalid && reservationForm.get('nombre_completo')?.touched">
+          <div
+            *ngIf="reservationForm.get('nombre_completo')?.invalid && reservationForm.get('nombre_completo')?.touched"
+            class="text-red-600 text-sm mt-1">
             El nombre es requerido
           </div>
         </div>
@@ -43,14 +41,11 @@
         <!-- Email -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
-          <input
-            type="email"
-            formControlName="email"
+          <input type="email" formControlName="email"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            [class.border-red-300]="reservationForm.get('email')?.invalid && reservationForm.get('email')?.touched"
-          >
+            [class.border-red-300]="reservationForm.get('email')?.invalid && reservationForm.get('email')?.touched">
           <div *ngIf="reservationForm.get('email')?.invalid && reservationForm.get('email')?.touched"
-               class="text-red-600 text-sm mt-1">
+            class="text-red-600 text-sm mt-1">
             <span *ngIf="reservationForm.get('email')?.errors?.['required']">El email es requerido</span>
             <span *ngIf="reservationForm.get('email')?.errors?.['email']">Email inválido</span>
           </div>
@@ -59,27 +54,55 @@
         <!-- Teléfono -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono *</label>
-          <input
-            type="tel"
-            formControlName="telefono"
+          <input type="tel" formControlName="telefono"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            [class.border-red-300]="reservationForm.get('telefono')?.invalid && reservationForm.get('telefono')?.touched"
-          >
+            [class.border-red-300]="reservationForm.get('telefono')?.invalid && reservationForm.get('telefono')?.touched">
           <div *ngIf="reservationForm.get('telefono')?.invalid && reservationForm.get('telefono')?.touched"
-               class="text-red-600 text-sm mt-1">
+            class="text-red-600 text-sm mt-1">
             El teléfono es requerido
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <!-- Fecha -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Reserva *</label>
+            <input type="date" formControlName="fecha" [min]="today"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              [class.border-red-300]="reservationForm.get('fecha')?.invalid && reservationForm.get('fecha')?.touched">
+            <div *ngIf="reservationForm.get('fecha')?.invalid && reservationForm.get('fecha')?.touched"
+              class="text-red-600 text-sm mt-1">
+              La fecha es requerida
+            </div>
+          </div>
+
+          <!-- Hora -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Hora de Reserva *</label>
+            <select formControlName="hora"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              [class.border-red-300]="reservationForm.get('hora')?.invalid && reservationForm.get('hora')?.touched">
+              <option value="">Seleccionar hora</option>
+              <option value="12:00:00">12:00 PM</option>
+              <option value="13:00:00">1:00 PM</option>
+              <option value="14:00:00">2:00 PM</option>
+              <option value="19:00:00">7:00 PM</option>
+              <option value="20:00:00">8:00 PM</option>
+              <option value="21:00:00">9:00 PM</option>
+            </select>
+            <div *ngIf="reservationForm.get('hora')?.invalid && reservationForm.get('hora')?.touched"
+              class="text-red-600 text-sm mt-1">
+              La hora es requerida
+            </div>
           </div>
         </div>
 
         <!-- Notas -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Notas Especiales</label>
-          <textarea
-            formControlName="notas"
-            rows="4"
+          <textarea formControlName="notas" rows="4"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Alergias alimentarias, celebración especial, requerimientos específicos..."
-          ></textarea>
+            placeholder="Alergias alimentarias, celebración especial, requerimientos específicos..."></textarea>
         </div>
 
         <!-- Información del Cliente Logeado -->
@@ -91,18 +114,12 @@
 
         <!-- Botones -->
         <div class="flex space-x-4 pt-6">
-          <button
-            type="button"
-            (click)="goBack()"
-            class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-3 px-6 rounded-md transition-colors"
-          >
+          <button type="button" (click)="goBack()"
+            class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-3 px-6 rounded-md transition-colors">
             Cancelar
           </button>
-          <button
-            type="submit"
-            [disabled]="!reservationForm.valid || loading"
-            class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-3 px-6 rounded-md transition-colors"
-          >
+          <button type="submit" [disabled]="!reservationForm.valid || loading"
+            class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-3 px-6 rounded-md transition-colors">
             <span *ngIf="loading">Procesando...</span>
             <span *ngIf="!loading">Confirmar Reserva</span>
           </button>

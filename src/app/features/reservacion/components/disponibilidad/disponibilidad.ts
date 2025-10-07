@@ -31,6 +31,8 @@ export class Disponibilidad implements OnInit {
         hora: params['hora'],
         capacidad: +params['capacidad']
       };
+      console.log('Params recibidos:', this.searchParams); // DEBUG
+      this.loadAvailability();
     });
   }
 
@@ -38,14 +40,20 @@ export class Disponibilidad implements OnInit {
     if (!this.searchParams) return;
 
     this.loading = true;
-    this.error = ''
+    this.error = '';
+
+    console.log('Llamando a getMesasDisponibles con:', this.searchParams); // DEBUG
 
     this.mesaService.getMesasDisponibles(this.searchParams).subscribe({
       next: (mesas) => {
+        console.log('Respuesta recibida:', mesas); // DEBUG
+        console.log('Tipo de respuesta:', typeof mesas); // DEBUG
+        console.log('Es array?', Array.isArray(mesas)); // DEBUG
         this.mesas = mesas;
         this.loading = false;
       },
       error: (error) => {
+        console.error('Error en suscripción:', error); // DEBUG
         this.error = error.message;
         this.loading = false;
       }
@@ -69,15 +77,16 @@ export class Disponibilidad implements OnInit {
   }
 
   getMesaImage(mesa: Mesa): string {
-    const imageMap: { [key: string]: string } = {
-      'Vip': '/assets/images/tables/vip-table.jpg',
-      'Premium': '/assets/images/tables/premium-table.jpg',
-      'Standard': '/assets/images/tables/standard-table.jpg'
-    };
-    return imageMap[mesa.tipo] || '/assets/images/tables/default-table.jpg';
-  }
+  // Usar SVG embebido como data URI para evitar requests externos
+  const imageMap: { [key: string]: string } = {
+    'Vip': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNmI0NmMxIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5NZXNhIFZJUDwvdGV4dD48L3N2Zz4=',
+    'Premium': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjZhZDU1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5NZXNhIFByZW1pdW08L3RleHQ+PC9zdmc+',
+    'Standard': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNDI5OWUxIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5NZXNhIFN0YW5kYXJkPC90ZXh0Pjwvc3ZnPg=='
+  };
+  return imageMap[mesa.tipo] || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNzE4MDk2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9jPSJtaWRkbGUiIGR5PSIuM2VtIj5NZXNhPC90ZXh0Pjwvc3ZnPg==';
+}
 
-    getBadgeClass(tipo: string): string {
+  getBadgeClass(tipo: string): string {
     const badgeClasses: { [key: string]: string } = {
       'Vip': 'bg-purple-100 text-purple-800',
       'Premium': 'bg-yellow-100 text-yellow-800',

@@ -40,9 +40,18 @@ export class MesasGaleria implements OnInit {
     });
   }
 
-  reserveTable(mesaId: number): void {
-    this.router.navigate(['/reservacion', mesaId]);
-  }
+reserveTable(mesaId: number): void {
+  // Navegar con queryParams para mantener consistencia
+  const mesa = this.mesas.find(m => m.id_mesa === mesaId);
+
+  this.router.navigate(['/reservacion', mesaId], {
+    queryParams: {
+      fecha: '',
+      hora: '',
+      capacidad: mesa?.capacidad || 2
+    }
+  });
+}
 
   getMesaImage(mesa: Mesa): string {
     const imageMap: { [key: string]: string } = {
