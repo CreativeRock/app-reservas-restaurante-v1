@@ -24,7 +24,7 @@ export const routes: Routes = [
 
   //Reservaciones
   {
-    path: 'disponibiliad',
+    path: 'disponibilidad',
     loadComponent: () => import('./features/reservacion/components/disponibilidad/disponibilidad')
       .then(componente => componente.Disponibilidad)
   },
@@ -34,7 +34,7 @@ export const routes: Routes = [
       .then(componente => componente.MesasGaleria)
   },
   {
-    path: 'reservacion/:tableId',
+    path: 'reservacion/:mesaId',
     loadComponent: () => import('./features/reservacion/components/reservacion-detalles/reservacion-detalles')
       .then(componente => componente.ReservacionDetalles)
   },
