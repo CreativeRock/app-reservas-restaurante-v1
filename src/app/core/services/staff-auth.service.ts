@@ -25,7 +25,6 @@ export class StaffAuthService {
       { withCredentials: true } // IMPORTANTE
     ).pipe(
       tap(response => {
-        console.log('Login response:', response); // DEBUG
         if (response.success) {
           const usuario: Usuario = {
             id_usuario: response.data.id,
@@ -39,21 +38,19 @@ export class StaffAuthService {
             id_rol: this.mapRolToId(response.data.rol)
           };
           this.setCurrentUsuario(usuario);
-          console.log('Usuario almacenado en localStorage:', localStorage.getItem('currentUsuario')); // DEBUG
         }
       }),
-      catchError(this.handleError.bind(this)) // FIX: Bind this context
+      catchError(this.handleError.bind(this))
     );
   }
 
   getCurrentUsuario(): Observable<UsuarioAuthResponse> {
-    console.log('Solicitando usuario actual...'); // DEBUG
     return this.http.get<UsuarioAuthResponse>(
       `${this.baseUrl}/me`,
-      { withCredentials: true } // IMPORTANTE
+      { withCredentials: true }
     ).pipe(
       tap(response => {
-        console.log('Respuesta /me:', response); // DEBUG
+        console.log('Respuesta /me:', response);
         if (response.success) {
           const usuario: Usuario = {
             id_usuario: response.data.id,
@@ -69,8 +66,7 @@ export class StaffAuthService {
           this.setCurrentUsuario(usuario);
         }
       }),
-      catchError((error) => { // FIX: Usar arrow function para mantener this
-        console.error('Error en getCurrentUsuario:', error); // DEBUG
+      catchError((error) => {
         if (error.status === 401) {
           this.clearCurrentUsuario();
         }
@@ -83,13 +79,12 @@ export class StaffAuthService {
     return this.http.post(
       `${this.baseUrl}/logout`,
       {},
-      { withCredentials: true } // IMPORTANTE
+      { withCredentials: true }
     ).pipe(
       tap(() => {
         this.clearCurrentUsuario();
-        console.log('Logout exitoso, localStorage limpiado'); // DEBUG
       }),
-      catchError(this.handleError.bind(this)) // FIX: Bind this context
+      catchError(this.handleError.bind(this))
     );
   }
 
@@ -138,17 +133,14 @@ export class StaffAuthService {
   clearCurrentUsuario(): void {
     localStorage.removeItem('currentUsuario');
     this.currentUsuarioSubject.next(null);
-    console.log('Usuario limpiado de localStorage y subject'); // DEBUG
   }
 
   private loadStoredUsuario(): void {
     const storedUsuario = localStorage.getItem('currentUsuario');
-    console.log('Usuario almacenado encontrado:', storedUsuario); // DEBUG
     if (storedUsuario) {
       try {
         const usuario = JSON.parse(storedUsuario);
         this.currentUsuarioSubject.next(usuario);
-        console.log('Usuario cargado desde localStorage:', usuario); // DEBUG
       } catch (error) {
         console.error('Error loading stored usuario:', error);
         this.clearCurrentUsuario();
@@ -166,7 +158,7 @@ export class StaffAuthService {
       errorMessage = 'No se pudo conectar al servidor';
     } else if (error.status === 401) {
       errorMessage = 'No autorizado. Por favor, inicia sesión nuevamente.';
-      this.clearCurrentUsuario(); // FIX: Ahora this está correctamente bindeado
+      this.clearCurrentUsuario();
     }
 
     return throwError(() => new Error(errorMessage));
