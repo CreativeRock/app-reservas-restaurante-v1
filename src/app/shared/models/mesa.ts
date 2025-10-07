@@ -12,12 +12,7 @@ export interface Mesa {
 export interface MesaDisponibilidadResponse {
   success: boolean;
   message: string;
-  data: {
-    mesas_disponibles: Mesa[];
-    total: number;
-    fecha: string;
-    hora: string;
-  };
+  data: Mesa[];
 }
 
 export interface SearchParams {
