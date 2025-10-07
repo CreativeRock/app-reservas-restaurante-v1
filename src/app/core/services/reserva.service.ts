@@ -7,11 +7,11 @@ import { catchError, map, Observable, throwError } from 'rxjs';
   providedIn: 'root'
 })
 export class ReservaService {
- private http = inject(HttpClient);
-  private baseUrl = 'http://localhost/api-sistema-restaurante-g2-v1/public/reservas';
+  private http = inject(HttpClient);
+  private baseUrl = 'http://localhost/api-sistema-restaurante-g2-v1/public';
 
   createReserva(reserva: ReservaRequest): Observable<Reserva> {
-    return this.http.post<ReservaResponse>(this.baseUrl, reserva)
+    return this.http.post<ReservaResponse>(`${this.baseUrl}/cliente/reservas`, reserva)
       .pipe(
         map(response => {
           if (response.success) {
@@ -25,7 +25,7 @@ export class ReservaService {
   }
 
   getReservasByCliente(idCliente: number): Observable<Reserva[]> {
-    return this.http.get<{success: boolean, message: string, data: Reserva[]}>(`${this.baseUrl}/cliente/${idCliente}`)
+    return this.http.get<{success: boolean, message: string, data: Reserva[]}>(`${this.baseUrl}/cliente/reservas/cliente/${idCliente}`)
       .pipe(
         map(response => {
           if (response.success) {
@@ -39,7 +39,7 @@ export class ReservaService {
   }
 
   getReservaById(idReserva: number): Observable<Reserva> {
-    return this.http.get<{success: boolean, message: string, data: Reserva}>(`${this.baseUrl}/${idReserva}`)
+    return this.http.get<{success: boolean, message: string, data: Reserva}>(`${this.baseUrl}/cliente/reservas/${idReserva}`)
       .pipe(
         map(response => {
           if (response.success) {
@@ -53,7 +53,7 @@ export class ReservaService {
   }
 
   cancelReserva(idReserva: number): Observable<Reserva> {
-    return this.http.put<ReservaResponse>(`${this.baseUrl}/${idReserva}/cancelar`, {})
+    return this.http.put<ReservaResponse>(`${this.baseUrl}/cliente/reservas/${idReserva}/cancelar`, {})
       .pipe(
         map(response => {
           if (response.success) {
@@ -67,7 +67,7 @@ export class ReservaService {
   }
 
   updateReserva(idReserva: number, updates: Partial<Reserva>): Observable<Reserva> {
-    return this.http.put<ReservaResponse>(`${this.baseUrl}/${idReserva}`, updates)
+    return this.http.put<ReservaResponse>(`${this.baseUrl}/cliente/reservas/${idReserva}`, updates)
       .pipe(
         map(response => {
           if (response.success) {
@@ -81,7 +81,7 @@ export class ReservaService {
   }
 
   getAllReservas(): Observable<Reserva[]> {
-    return this.http.get<{success: boolean, message: string, data: Reserva[]}>(this.baseUrl)
+    return this.http.get<{success: boolean, message: string, data: Reserva[]}>(`${this.baseUrl}/cliente/reservas`)
       .pipe(
         map(response => {
           if (response.success) {
@@ -95,7 +95,7 @@ export class ReservaService {
   }
 
   getReservasByFecha(fecha: string): Observable<Reserva[]> {
-    return this.http.get<{success: boolean, message: string, data: Reserva[]}>(`${this.baseUrl}/fecha/${fecha}`)
+    return this.http.get<{success: boolean, message: string, data: Reserva[]}>(`${this.baseUrl}/cliente/reservas/fecha/${fecha}`)
       .pipe(
         map(response => {
           if (response.success) {
